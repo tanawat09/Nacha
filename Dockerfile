@@ -26,6 +26,9 @@ WORKDIR /var/www
 # Copy existing application directory contents
 COPY . /var/www
 
+# Install Composer Dependencies during the build process
+RUN composer install --no-interaction --optimize-autoloader --no-dev
+
 # Copy the custom script
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
