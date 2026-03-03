@@ -15,12 +15,7 @@ mkdir -p /var/www/storage/logs
 chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# Wait for MySQL to be ready
-echo "Waiting for MySQL to be ready..."
-while ! mysqladmin ping -h"db" --silent; do
-    sleep 1
-done
-echo "MySQL is ready!"
+# Removed wait for MySQL since it is handled externally
 
 # Automatically run migrations
 echo "Running database migrations..."
