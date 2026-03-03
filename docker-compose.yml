@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nacha-app
+    container_name: nacha-app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - db
+    networks:
+      - nacha-network
+    environment:
+      - DB_HOST=db
+      - DB_DATABASE=${DB_DATABASE:-business_db}
+      - DB_USERNAME=${DB_USERNAME:-tanawat}
+      - DB_PASSWORD=${DB_PASSWORD:-Noipalee@09}
+
+  web:
+    image: nginx:alpine
+    container_name: nacha-web
+    restart: unless-stopped
+    ports:
+      - "8015:80"
+    volumes:
+      - ./:/var/www
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - app
+    networks:
+      - nacha-network
+
+  db:
+    image: mysql:8.0
+    container_name: nacha-db
+    restart: unless-stopped
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE:-business_db}
+      - MYSQL_USER=${DB_USERNAME:-tanawat}
+      - MYSQL_PASSWORD=${DB_PASSWORD:-Noipalee@09}
+      - MYSQL_ROOT_PASSWORD=root_secure_password_replace_me
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - nacha-network
+    ports:
+      - "3306:3306"
+
+networks:
+  nacha-network:
+    driver: bridge
+
+volumes:
+  db_data:
